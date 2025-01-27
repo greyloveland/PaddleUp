@@ -1,7 +1,7 @@
 # Getting started
 
 clone the repo
-git clone git@github.com:Manodiestra/data5570-spring-2025.git
+`git clone git@github.com:Manodiestra/data5570-spring-2025.git`
 
 ## back end
 1. Make a virtual environment
