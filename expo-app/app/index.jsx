@@ -1,18 +1,31 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { Picker } from '@react-native-picker/picker';
+import { View, StyleSheet, Alert } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'expo-router';
+import { Button, Card } from 'react-native-paper';
+import { FormBuilder } from 'react-native-paper-form-builder';
 
 export default function Index() {
+  const router = useRouter();
+
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       first_name: '',
       last_name: '',
       phone_number: '',
       email: '',
-      favorite_color: 'red',  // Default selected color
+      favorite_color: 'red',
     },
   });
+
+  const colorOptions = [
+    { label: 'Red', value: 'red' },
+    { label: 'Blue', value: 'blue' },
+    { label: 'Green', value: 'green' },
+    { label: 'Yellow', value: 'yellow' },
+    { label: 'Purple', value: 'purple' },
+    { label: 'Orange', value: 'orange' },
+  ];
 
   const onSubmit = (data) => {
     console.log('Form Data:', data);
@@ -20,121 +33,98 @@ export default function Index() {
     reset(); // Optional: Reset form after submission
   };
 
+  const navigateToStateDemos = () => {
+    router.push('stateDemos/');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>User Registration</Text>
+      <Card style={styles.card}>
+        <Card.Title title="User Registration" />
+        <Card.Content>
+          <FormBuilder
+            control={control}
+            setFocus={() => {}}
+            formConfigArray={[
+              {
+                name: 'first_name',
+                type: 'text',
+                textInputProps: {
+                  label: 'First Name',
+                  mode: 'outlined',
+                },
+                rules: {
+                  required: 'First name is required',
+                },
+              },
+              {
+                name: 'last_name',
+                type: 'text',
+                textInputProps: {
+                  label: 'Last Name',
+                  mode: 'outlined',
+                },
+                rules: {
+                  required: 'Last name is required',
+                },
+              },
+              {
+                name: 'phone_number',
+                type: 'text',
+                textInputProps: {
+                  label: 'Phone Number',
+                  mode: 'outlined',
+                  keyboardType: 'phone-pad',
+                },
+                rules: {
+                  required: 'Phone number is required',
+                  pattern: {
+                    value: /^[0-9\-+() ]{7,15}$/,
+                    message: 'Invalid phone number',
+                  },
+                },
+              },
+              {
+                name: 'email',
+                type: 'text',
+                textInputProps: {
+                  label: 'Email (Optional)',
+                  mode: 'outlined',
+                  keyboardType: 'email-address',
+                },
+                rules: {
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Invalid email address',
+                  },
+                },
+              },
+              {
+                name: 'favorite_color',
+                type: 'select',
+                textInputProps: {
+                  label: 'Favorite Color',
+                  mode: 'outlined',
+                },
+                options: colorOptions,
+                rules: {
+                  required: 'Please select a favorite color',
+                },
+              },
+            ]}
+          />
 
-      {/* First Name */}
-      <Controller
-        control={control}
-        name="first_name"
-        rules={{ required: 'First name is required' }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="First Name"
-              value={value}
-              onChangeText={onChange}
-            />
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </View>
-        )}
-      />
+          {/* Submit Button */}
+          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
+            Submit
+          </Button>
 
-      {/* Last Name */}
-      <Controller
-        control={control}
-        name="last_name"
-        rules={{ required: 'Last name is required' }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="Last Name"
-              value={value}
-              onChangeText={onChange}
-            />
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </View>
-        )}
-      />
-
-      {/* Phone Number */}
-      <Controller
-        control={control}
-        name="phone_number"
-        rules={{
-          required: 'Phone number is required',
-          pattern: {
-            value: /^[0-9\-+() ]{7,15}$/,
-            message: 'Invalid phone number',
-          },
-        }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="Phone Number"
-              value={value}
-              onChangeText={onChange}
-              keyboardType="phone-pad"
-            />
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </View>
-        )}
-      />
-
-      {/* Email (Optional) */}
-      <Controller
-        control={control}
-        name="email"
-        rules={{
-          pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: 'Invalid email address',
-          },
-        }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.input, error && styles.inputError]}
-              placeholder="Email (Optional)"
-              value={value}
-              onChangeText={onChange}
-              keyboardType="email-address"
-            />
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </View>
-        )}
-      />
-
-      {/* Favorite Color Picker */}
-      <Controller
-        control={control}
-        name="favorite_color"
-        rules={{ required: 'Please select a favorite color' }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Favorite Color:</Text>
-            <Picker
-              selectedValue={value}
-              onValueChange={onChange}
-              style={styles.picker}
-            >
-              <Picker.Item label="Red" value="red" />
-              <Picker.Item label="Blue" value="blue" />
-              <Picker.Item label="Green" value="green" />
-              <Picker.Item label="Yellow" value="yellow" />
-              <Picker.Item label="Purple" value="purple" />
-              <Picker.Item label="Orange" value="orange" />
-            </Picker>
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </View>
-        )}
-      />
-
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+          {/* Navigation Button */}
+          <Button mode="outlined" onPress={navigateToStateDemos} style={styles.navButton}>
+            Go to State Demos
+          </Button>
+        </Card.Content>
+      </Card>
     </View>
   );
 }
@@ -144,40 +134,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  inputContainer: {
-    marginBottom: 15,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
+  card: {
     padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#fff',
+    borderRadius: 10,
   },
-  inputError: {
-    borderColor: 'red',
+  submitButton: {
+    marginTop: 20,
   },
-  picker: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#fff',
-  },
-  label: {
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginTop: 5,
+  navButton: {
+    marginTop: 10,
   },
 });
