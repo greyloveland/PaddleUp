@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'expo-router';
 import { Button, Card } from 'react-native-paper';
 import { FormBuilder } from 'react-native-paper-form-builder';
+import { useDispatch } from 'react-redux';
+import { addFormData } from '@/state/userSlice';
 
 export default function Index() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -28,9 +31,11 @@ export default function Index() {
   ];
 
   const onSubmit = (data) => {
+    // Dispatch the form data to the Redux slice
+    dispatch(addFormData(data));
+    
     console.log('Form Data:', data);
-    Alert.alert('Form Submitted', `User: ${data.first_name} ${data.last_name}\nFavorite Color: ${data.favorite_color}`);
-    reset(); // Optional: Reset form after submission
+    reset();
   };
 
   const navigateToStateDemos = () => {
@@ -115,13 +120,30 @@ export default function Index() {
           />
 
           {/* Submit Button */}
-          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            style={styles.submitButton}
+          >
             Submit
           </Button>
 
           {/* Navigation Button */}
-          <Button mode="outlined" onPress={navigateToStateDemos} style={styles.navButton}>
+          <Button
+            mode="outlined"
+            onPress={navigateToStateDemos}
+            style={styles.navButton}
+          >
             Go to State Demos
+          </Button>
+
+          {/* Navigation Button */}
+          <Button
+            mode="outlined"
+            onPress={() => router.push('displayUserData/')}
+            style={styles.navButton}
+          >
+            View User Data
           </Button>
         </Card.Content>
       </Card>
