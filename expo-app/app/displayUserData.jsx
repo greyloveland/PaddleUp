@@ -1,31 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Card, Paragraph, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFormData } from '@/state/userSlice';
+import { fetchUsers, deleteUser } from '@/state/userSlice';
 
 export default function DisplayUserData() {
-  const userDataList = useSelector((state) => state.user.formDataList);
   const dispatch = useDispatch();
+  const { formDataList, status, error } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(fetchUsers()); // Fetch users on component mount
+  }, []);
+
+  if (status === 'loading') return <Paragraph>Loading...</Paragraph>;
+  if (error) return <Paragraph>Error: {error}</Paragraph>;
 
   return (
     <ScrollView style={styles.container}>
-      {userDataList.length > 0 ? (
-        userDataList.map((userData, index) => (
-          <Card key={index} style={styles.card}>
-            <Card.Title title={`User ${index + 1}`} />
+      {formDataList.length > 0 ? (
+        formDataList.map((user) => (
+          <Card key={user.id} style={styles.card}>
+            <Card.Title title={`${user.first_name} ${user.last_name}`} />
             <Card.Content>
-              <Paragraph>First Name: {userData.first_name}</Paragraph>
-              <Paragraph>Last Name: {userData.last_name}</Paragraph>
-              <Paragraph>Phone Number: {userData.phone_number}</Paragraph>
-              <Paragraph>Email: {userData.email}</Paragraph>
-              <Paragraph>Favorite Color: {userData.favorite_color}</Paragraph>
+              <Paragraph>Phone Number: {user.phone_number}</Paragraph>
+              <Paragraph>Email: {user.email || 'N/A'}</Paragraph>
+              <Paragraph>Favorite Color: {user.favorite_color}</Paragraph>
             </Card.Content>
             <Card.Actions>
-              <Button
-                onPress={() => dispatch(removeFormData(index))}
-                mode="contained"
-              >
+              <Button onPress={() => dispatch(deleteUser(user.id))} mode="contained">
                 Remove
               </Button>
             </Card.Actions>

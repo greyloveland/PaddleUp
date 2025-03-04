@@ -5,8 +5,7 @@ import { useRouter } from 'expo-router';
 import { Button, Card } from 'react-native-paper';
 import { FormBuilder } from 'react-native-paper-form-builder';
 import { useDispatch } from 'react-redux';
-import { addFormData } from '@/state/userSlice';
-import { v4 as uuidv4 } from 'uuid'; // Import UUID generator
+import { createUser } from '@/state/userSlice';
 
 export default function Index() {
   const router = useRouter();
@@ -32,15 +31,10 @@ export default function Index() {
   ];
 
   const onSubmit = (data) => {
-    const newUserEntry = {
-      id: uuidv4(), // Generate unique ID for each entry
-      ...data,
-    };
-
     // Dispatch the new user data to the Redux store
-    dispatch(addFormData(newUserEntry));
+    dispatch(createUser(data));
 
-    console.log('New User Entry:', newUserEntry);
+    console.log('New User Entry:', data);
     reset(); // Reset the form after submission
   };
 
