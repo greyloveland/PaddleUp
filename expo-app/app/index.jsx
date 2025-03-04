@@ -6,6 +6,7 @@ import { Button, Card } from 'react-native-paper';
 import { FormBuilder } from 'react-native-paper-form-builder';
 import { useDispatch } from 'react-redux';
 import { addFormData } from '@/state/userSlice';
+import { v4 as uuidv4 } from 'uuid'; // Import UUID generator
 
 export default function Index() {
   const router = useRouter();
@@ -31,15 +32,16 @@ export default function Index() {
   ];
 
   const onSubmit = (data) => {
-    // Dispatch the form data to the Redux slice
-    dispatch(addFormData(data));
-    
-    console.log('Form Data:', data);
-    reset();
-  };
+    const newUserEntry = {
+      id: uuidv4(), // Generate unique ID for each entry
+      ...data,
+    };
 
-  const navigateToStateDemos = () => {
-    router.push('stateDemos/');
+    // Dispatch the new user data to the Redux store
+    dispatch(addFormData(newUserEntry));
+
+    console.log('New User Entry:', newUserEntry);
+    reset(); // Reset the form after submission
   };
 
   return (
@@ -126,15 +128,6 @@ export default function Index() {
             style={styles.submitButton}
           >
             Submit
-          </Button>
-
-          {/* Navigation Button */}
-          <Button
-            mode="outlined"
-            onPress={navigateToStateDemos}
-            style={styles.navButton}
-          >
-            Go to State Demos
           </Button>
 
           {/* Navigation Button */}
