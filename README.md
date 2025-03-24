@@ -9,7 +9,7 @@ clone the repo
 1. Activate it
 1. `source myvenv/bin/activate`
 1. Install pip modules
-1. `pip3 install django djangorestframework`
+1. `pip3 install django djangorestframework django-cors-headers`
 1. `cd django_back_end`
 1. Make database migrations
 1. `python3 manage.py makemigrations api_app`
