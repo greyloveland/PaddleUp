@@ -21,7 +21,7 @@ export default function SignInScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text variant="headlineLarge" style={styles.title}>Sign In</Text>
+          <Text variant="headlineLarge" style={styles.title}>Welcome</Text>
           <TextInput
             label="Email"
             mode="outlined"
