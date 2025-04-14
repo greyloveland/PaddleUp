@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Base API URL
 const API_URL = 'http://localhost:8000/api/users/';
+const AUTH_URL = 'http://localhost:8000/api/auth/';
 
 // Thunks for async operations
 export const fetchUsers = createAsyncThunk('user/fetchUsers', async () => {
@@ -18,6 +19,17 @@ export const createUser = createAsyncThunk('user/createUser', async (userData) =
   });
 
   if (!response.ok) throw new Error('Failed to create user');
+  return await response.json();
+});
+
+export const loginUser = createAsyncThunk('user/loginUser', async (credentials) => {
+  const response = await fetch(`${AUTH_URL}login/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) throw new Error('Login failed');
   return await response.json();
 });
 
@@ -40,6 +52,8 @@ export const deleteUser = createAsyncThunk('user/deleteUser', async (id) => {
 // Initial State
 const initialState = {
   formDataList: [],
+  currentUser: null,
+  token: null,
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
 };
@@ -48,7 +62,12 @@ const initialState = {
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.currentUser = null;
+      state.token = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
@@ -65,6 +84,18 @@ const userSlice = createSlice({
       .addCase(createUser.fulfilled, (state, action) => {
         state.formDataList.push(action.payload);
       })
+      .addCase(loginUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.currentUser = action.payload;
+        state.token = action.payload.token;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
       .addCase(updateUser.fulfilled, (state, action) => {
         const index = state.formDataList.findIndex((user) => user.id === action.payload.id);
         if (index !== -1) {
@@ -77,4 +108,5 @@ const userSlice = createSlice({
   },
 });
 
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;
