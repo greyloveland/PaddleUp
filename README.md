@@ -12,7 +12,7 @@ clone the repo
 1. `pip3 install django djangorestframework django-cors-headers`
 1. `cd django_back_end`
 1. Make database migrations
-1. `python3 manage.py makemigrations api_app`
+1. `python3 manage.py makemigrations pickle_app`
 1. `python3 manage.py migrate`
 1. Run the app
 1. `python3 manage.py runserver`
@@ -26,3 +26,4 @@ clone the repo
 1. `npm install`
 1. Run the app
 1. `npm start`
+# paddleup
